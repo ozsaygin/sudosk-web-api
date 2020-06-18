@@ -21,7 +21,7 @@ mongoose.connection.on('connected', err => {
 })
 
 var indexRouter = require('./routes/index');
-var climbPathRouter = require('./routes/climbPathRoute');
+var routesRouter = require('./routes/routes');
 
 var app = express();
 
@@ -32,6 +32,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/climbPath/', climbPathRouter);
+app.use('/routes', routesRouter);
 
 module.exports = app;
