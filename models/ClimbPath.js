@@ -4,7 +4,9 @@ const ClimbPath = mongoose.Schema({
     label: String,
     creator: String,
     color: String,
+    path: String,
     dateAdded: Date
 })
 
-module.exports.ClimbPath = mongoose.model('ClimbPath', ClimbPath)
+
+module.exports = mongoose.model('ClimbPath', ClimbPath)

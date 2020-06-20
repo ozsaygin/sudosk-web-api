@@ -1,23 +1,62 @@
 var express = require('express');
 const { route } = require('.');
 const router = express.Router();
-var ClimbPath = require('../models/ClimbPath').ClimbPath
+const multer = require('multer');
+const { MulterError, diskStorage } = require('multer');
 
-router.post('/route', (req, res, next) => {
-    console.log(req.body)
+var fileFilter = (req, file, cb) => {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+        cb(null, true)
+    } else { cb(null, false) }
+}
+
+// TODO: Generate a test for limits
+var upload = multer({
+    storage: multer.diskStorage({
+        destination: 'uploads',
+        filename: (res, file, cb) => {
+
+            cb(null, new Date().toISOString() + file.originalname)
+        }
+    }),
+    fileFilter: fileFilter,
+    limits: {
+        fileSize: 10000000
+    }
+})
+
+var ClimbPath = require('../models/ClimbPath')
+
+router.post('/route', upload.single('recfile'), (req, res, next) => {
+    console.log(req.file)
     var newPath = new ClimbPath({
-        name: req.body.name,
+        label: req.body.name,
         creator: req.body.creator,
         color: req.body.color,
+        path: req.file.path,
         dateAdded: new Date()
     })
     newPath.save((err) => {
-        console.log(`error occured while saving new climbing path: ${err}`)
+        if (err) {
+            console.log(`error occured while saving new climbing path: ${err}`)
+        }
+        else {
+            console.log('route successfully has been posted ')
+        }
     })
-    res.send({'success': true, mmesage: 'Route successfully has been posted'})
+    res.send({ 'success': true, mmesage: 'Route successfully has been posted' })
 });
 
-router.get('/route', (req, res, next) => {
+router.get('/routes', (req, res, next) => {
+    ClimbPath.find({}, (err, res) => {
+        if (err) {
+            console.log(`error occured during query: ${err}`)
+        }
+        else {
+            console.log(`response for query: ${res}`)
+        }
+    })
+
     res.send({
         'success': true
     })
