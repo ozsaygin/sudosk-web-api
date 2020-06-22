@@ -5,7 +5,7 @@ const multer = require('multer');
 const { MulterError, diskStorage } = require('multer');
 
 var fileFilter = (req, file, cb) => {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png' || file.mimetype === 'video/mp4') {
         cb(null, true)
     } else { cb(null, false) }
 }
@@ -21,6 +21,7 @@ var upload = multer({
     }),
     fileFilter: fileFilter,
     limits: {
+        // cannot store file more than 10MB
         fileSize: 10000000
     }
 })
