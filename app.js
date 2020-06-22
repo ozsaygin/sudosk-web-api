@@ -5,8 +5,6 @@ var logger = require('morgan');
 var multer = require('multer');
 var mongoose = require('mongoose');
 
-
-
 /* mongoose */
 var MONGO_URI = 'mongodb://localhost:27017/sudosk'
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }).
@@ -24,7 +22,7 @@ mongoose.connection.on('connected', err => {
 
 var indexRouter = require('./routes/index');
 var routesRouter = require('./routes/routes');
-var authRouter = require('./routes/auth');
+var authRouter = require('./routes/auth').router;
 const { isBuffer } = require('util');
 
 var app = express();

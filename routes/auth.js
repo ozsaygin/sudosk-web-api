@@ -4,28 +4,29 @@ var router = express.Router();
 const crypto = require('crypto');
 
 const JWT_SECRET = 'SECRET_KEY'
-const accessTokenSecret = 'youraccesstokensecret';
 const refreshTokenSecret = 'yourrefreshtokensecrethere';
 const refreshTokens = [];
 
 var jsonwebtoken = require('jsonwebtoken');
 const { compileFunction } = require('vm');
 const { RSA_NO_PADDING } = require('constants');
+
 // auth middleware
-const authenticateJWT = (res, req, next) => {
+const authenticateJWT = (req, res, next) => {
     const authHeader = req.headers.authorization;
     if (authHeader) {
         // authHeader.format: Bearer [JWT_TOKEN]
         const token = authHeader.split(' ')[1]
-        jsonwebtoken.verify(token, accessTokenSecret, (err, user) => {
+        jsonwebtoken.verify(token, JWT_SECRET, (err, user) => {
             if (err) {
-                return res.sendStatus(403)
+                return res.send({ message: 'cannot verify jwt token, unauthorized' })
             }
+            console.log(user)
             req.user = user
             next()
         })
     } else {
-        res.sendStatus(401)
+        res.send({ message: 'no token' })
     }
 }
 
@@ -69,28 +70,12 @@ router.post('/login', async (req, res, next) => {
     console.log(`sent: ${hashPassword(password)}`)
     console.log(`db: ${result[0].password}`)
     if (hashPassword(password) === result[0].password) {
-        res.send({ message: 'user is authentic' })
+        const accessToken = jsonwebtoken.sign({ username: username }, JWT_SECRET)
+        res.send({ message: 'user is authentic', accessToken: accessToken })
     } else {
         res.send({ message: 'user is not authentic' })
     }
-
-    // const userPassword = ''
-    // if (password === userPassword) {
-    //     // generate an access token 
-    //     const accessToken = jsonwebtoken.sign({
-    //         username: username
-    //     }, JWT_SECRET)
-    //     res.send(accessToken)
-    // } else {
-    //     res.send({ message: 'Username or password is incorrect' })
-    // }
 })
 
-/* Authentic route posting */
-router.post('/postRoute', authenticateJWT, (req, res, next) => {
-    // TODO: Paste here post route method
-})
-
-
-
-module.exports = router;
+module.exports.router = router;
+module.exports.authenticateJWT =  authenticateJWT

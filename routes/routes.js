@@ -2,6 +2,7 @@ var express = require('express');
 const { route } = require('.');
 const router = express.Router();
 const multer = require('multer');
+const authenticateJWT = require('./auth').authenticateJWT
 const { MulterError, diskStorage } = require('multer');
 
 var fileFilter = (req, file, cb) => {
@@ -28,7 +29,8 @@ var upload = multer({
 
 var ClimbPath = require('../models/ClimbPath')
 
-router.post('/route', upload.single('recfile'), (req, res, next) => {
+/* POST post a new route */
+router.post('/route', authenticateJWT ,upload.single('recfile'), (req, res, next) => {
     console.log(req.file)
     var newPath = new ClimbPath({
         label: req.body.name,
@@ -48,18 +50,15 @@ router.post('/route', upload.single('recfile'), (req, res, next) => {
     res.send({ 'success': true, mmesage: 'Route successfully has been posted' })
 });
 
-router.get('/routes', (req, res, next) => {
-    ClimbPath.find({}, (err, res) => {
+/* GET all routes */
+router.get('/routes', authenticateJWT, (req, res, next) => {
+    ClimbPath.find({}, (err, data) => {
         if (err) {
             console.log(`error occured during query: ${err}`)
         }
         else {
-            console.log(`response for query: ${res}`)
+            res.send(data)
         }
-    })
-
-    res.send({
-        'success': true
     })
 })
 
