@@ -1,3 +1,7 @@
+/**
+ * routes.js is an endpoint for handling requests about climbing routes
+ **/
+
 var express = require('express');
 const { route } = require('.');
 const router = express.Router();
@@ -61,6 +65,36 @@ router.get('/routes', authenticateJWT, (req, res, next) => {
         }
     })
 })
+/**
+ * @swagger
+ * 
+ * /getRouterByColor:
+ *  get:
+ *      description: Return all routes with given color
+ *      produces: 
+ *          - application/json
+ *      parameters:
+ *       - name: username
+ *         description: Username to use for login.
+ *         in: formData
+ *         required: true
+ *         type: string
+ *       - name: password
+ *         description: User's password.
+ *         in: formData
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: login
+ * 
+ */
+router.get('/getRouteByColor', authenticateJWT, (req, res, next)=> {
 
+})
+
+router.get('getRouteByCreator', authenticateJWT, (req,res, next) => {
+
+})
 
 module.exports = router;
