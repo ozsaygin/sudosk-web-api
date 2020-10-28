@@ -3,6 +3,7 @@ const { route } = require('.');
 var router = express.Router();
 const crypto = require('crypto');
 
+// FIXME: Remove those secrets to embedd as environment variables
 const JWT_SECRET = 'SECRET_KEY'
 const refreshTokenSecret = 'yourrefreshtokensecrethere';
 const refreshTokens = [];
@@ -19,14 +20,14 @@ const authenticateJWT = (req, res, next) => {
         const token = authHeader.split(' ')[1]
         jsonwebtoken.verify(token, JWT_SECRET, (err, user) => {
             if (err) {
-                return res.send({ message: 'cannot verify jwt token, unauthorized' })
+                return res.send({ success: false, message: 'Invalid token' })
             }
             console.log(user)
             req.user = user
             next()
         })
     } else {
-        res.send({ message: 'no token' })
+        res.send({ success: false, message: 'No token' })
     }
 }
 
@@ -78,4 +79,4 @@ router.post('/login', async (req, res, next) => {
 })
 
 module.exports.router = router;
-module.exports.authenticateJWT =  authenticateJWT
+module.exports.authenticateJWT = authenticateJWT

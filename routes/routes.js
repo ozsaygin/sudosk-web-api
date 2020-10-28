@@ -20,7 +20,6 @@ var upload = multer({
     storage: multer.diskStorage({
         destination: 'uploads',
         filename: (res, file, cb) => {
-
             cb(null, new Date().toISOString() + file.originalname)
         }
     }),
@@ -34,7 +33,7 @@ var upload = multer({
 var ClimbPath = require('../models/ClimbPath')
 
 /* POST post a new route */
-router.post('/route', authenticateJWT ,upload.single('recfile'), (req, res, next) => {
+router.post('/route', authenticateJWT, upload.single('recfile'), (req, res, next) => {
     console.log(req.file)
     var newPath = new ClimbPath({
         label: req.body.name,
@@ -45,26 +44,27 @@ router.post('/route', authenticateJWT ,upload.single('recfile'), (req, res, next
     })
     newPath.save((err) => {
         if (err) {
-            console.log(`error occured while saving new climbing path: ${err}`)
+            console.log(`Error occured while saving new climbing path: ${err}`)
         }
         else {
-            console.log('route successfully has been posted ')
+            console.log('Route successfully has been posted ')
         }
     })
     res.send({ 'success': true, mmesage: 'Route successfully has been posted' })
 });
 
 /* GET all routes */
-router.get('/routes', authenticateJWT, (req, res, next) => {
-    ClimbPath.find({}, (err, data) => {
+router.get('/getAllRoutes', authenticateJWT, (req, res, next) => {
+    ClimbPath.find({}, (err, result) => {
         if (err) {
-            console.log(`error occured during query: ${err}`)
+            console.log(`Error occured during query: ${err}`)
         }
         else {
-            res.send(data)
+            res.send(result)
         }
     })
 })
+
 /**
  * @swagger
  * 
@@ -89,12 +89,28 @@ router.get('/routes', authenticateJWT, (req, res, next) => {
  *         description: login
  * 
  */
-router.get('/getRouteByColor', authenticateJWT, (req, res, next)=> {
-
+router.get('/getRouteByColor', authenticateJWT, (req, res, next) => {
+    ClimbPath.find({ color: req.body.color }, (err, result) => {
+        console.log('here')
+        if (err) {
+            console.log(`Error occured during query: ${err}`)
+        }
+        else {
+            res.send(result)
+        }
+    })
 })
 
-router.get('getRouteByCreator', authenticateJWT, (req,res, next) => {
-
+router.get('getRouteByCreator', authenticateJWT, (req, res, next) => {
+    ClimbPath.find({ color: req.body.creator }, (err, result) => {
+        console.log('here')
+        if (err) {
+            console.log(`Error occured during query: ${err}`)
+        }
+        else {
+            res.send(result)
+        }
+    })
 })
 
 module.exports = router;
